@@ -4,8 +4,11 @@ import android.app.Activity
 import android.content.Intent
 import android.media.projection.MediaProjectionManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -29,7 +32,23 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Edge-to-edge: required when targeting API 35 (enforced by the platform)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.setDecorFitsSystemWindows(false)
+        }
+
         setContentView(R.layout.activity_main)
+
+        // Apply window insets so content stays clear of system bars
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val rootView = findViewById<ViewGroup>(android.R.id.content)
+            rootView.setOnApplyWindowInsetsListener { view, insets ->
+                val sysInsets = insets.getInsets(android.view.WindowInsets.Type.systemBars())
+                view.setPadding(sysInsets.left, sysInsets.top, sysInsets.right, sysInsets.bottom)
+                insets
+            }
+        }
 
         statusText = findViewById(R.id.status_text)
         btnStart   = findViewById(R.id.btn_start)
@@ -68,6 +87,7 @@ class MainActivity : Activity() {
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        @Suppress("DEPRECATION")
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             REQ_OVERLAY -> {

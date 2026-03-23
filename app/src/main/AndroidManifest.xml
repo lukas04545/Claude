@@ -14,7 +14,8 @@
         android:icon="@drawable/ic_notification"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ClashDetector">
+        android:theme="@style/Theme.ClashDetector"
+        android:enableOnBackInvokedCallback="true">
 
         <!-- Main Activity -->
         <activity

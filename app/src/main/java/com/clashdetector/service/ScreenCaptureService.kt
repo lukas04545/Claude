@@ -14,6 +14,7 @@ import android.media.Image
 import android.media.ImageReader
 import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
+import android.os.Build
 import android.os.IBinder
 import android.util.DisplayMetrics
 import android.view.WindowManager
@@ -79,7 +80,12 @@ class ScreenCaptureService : Service() {
         when (intent?.action) {
             ACTION_START -> {
                 val resultCode = intent.getIntExtra(EXTRA_RESULT_CODE, 0)
-                val resultData = intent.getParcelableExtra<Intent>(EXTRA_RESULT_DATA)
+                val resultData = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    intent.getParcelableExtra(EXTRA_RESULT_DATA, Intent::class.java)
+                } else {
+                    @Suppress("DEPRECATION")
+                    intent.getParcelableExtra(EXTRA_RESULT_DATA)
+                }
                 if (resultCode != 0 && resultData != null) {
                     startCapture(resultCode, resultData)
                 }
@@ -196,12 +202,23 @@ class ScreenCaptureService : Service() {
 
     private fun readDisplayMetrics() {
         val wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val dm = DisplayMetrics()
-        @Suppress("DEPRECATION")
-        wm.defaultDisplay.getRealMetrics(dm)
-        screenWidth  = dm.widthPixels
-        screenHeight = dm.heightPixels
-        screenDpi    = dm.densityDpi
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val metrics = wm.currentWindowMetrics
+            val bounds = metrics.bounds
+            screenWidth  = bounds.width()
+            screenHeight = bounds.height()
+            val dm = DisplayMetrics()
+            @Suppress("DEPRECATION")
+            wm.defaultDisplay.getMetrics(dm)
+            screenDpi = dm.densityDpi
+        } else {
+            val dm = DisplayMetrics()
+            @Suppress("DEPRECATION")
+            wm.defaultDisplay.getRealMetrics(dm)
+            screenWidth  = dm.widthPixels
+            screenHeight = dm.heightPixels
+            screenDpi    = dm.densityDpi
+        }
     }
 
     private fun buildNotification(): Notification {
