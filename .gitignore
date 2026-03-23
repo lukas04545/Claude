@@ -1,0 +1,4 @@
+build_output/
+.gradle/
+*.deb
+*.idsig
