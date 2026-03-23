@@ -17,7 +17,7 @@ import android.media.projection.MediaProjectionManager
 import android.os.IBinder
 import android.util.DisplayMetrics
 import android.view.WindowManager
-import androidx.core.app.NotificationCompat
+
 import com.clashdetector.R
 import com.clashdetector.detection.CardDetector
 import com.clashdetector.detection.ElixirTracker
@@ -211,7 +211,7 @@ class ScreenCaptureService : Service() {
                 NotificationChannel(CHANNEL_ID, "Screen Capture", NotificationManager.IMPORTANCE_LOW)
             )
         }
-        return NotificationCompat.Builder(this, CHANNEL_ID)
+        return Notification.Builder(this, CHANNEL_ID)
             .setContentTitle("Clash Royale AI Detector")
             .setContentText("Analysing enemy cards…")
             .setSmallIcon(R.drawable.ic_notification)

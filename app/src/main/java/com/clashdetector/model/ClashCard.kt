@@ -1,13 +1,9 @@
 package com.clashdetector.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
-
 enum class CardRarity { COMMON, RARE, EPIC, LEGENDARY }
 
 enum class CardType { TROOP, SPELL, BUILDING }
 
-@Parcelize
 data class ClashCard(
     val id: String,
     val name: String,
@@ -15,7 +11,7 @@ data class ClashCard(
     val rarity: CardRarity,
     val type: CardType,
     val imageAsset: String   // filename in assets/card_images/
-) : Parcelable
+)
 
 /**
  * Registry of all Clash Royale cards with their elixir costs.

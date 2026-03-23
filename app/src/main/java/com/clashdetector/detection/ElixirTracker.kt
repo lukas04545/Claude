@@ -56,7 +56,7 @@ class ElixirTracker {
     private val pendingDeductions = mutableListOf<Float>()
 
     // ---- History for the overlay ----
-    private val recentPlays = ArrayDeque<PlayedCard>(maxSize = 8)
+    private val recentPlays = ArrayDeque<PlayedCard>(8)
 
     // -------------------------------------------------------------------------
     // Public API

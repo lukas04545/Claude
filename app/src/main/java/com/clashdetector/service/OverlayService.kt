@@ -16,7 +16,7 @@ import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.app.NotificationCompat
+
 import com.clashdetector.R
 import com.clashdetector.model.GameState
 import com.clashdetector.model.PlayedCard
@@ -236,7 +236,7 @@ class OverlayService : Service() {
                 NotificationChannel(CHANNEL_ID, "Overlay", NotificationManager.IMPORTANCE_LOW)
             )
         }
-        return NotificationCompat.Builder(this, CHANNEL_ID)
+        return Notification.Builder(this, CHANNEL_ID)
             .setContentTitle("Clash Detector Overlay")
             .setContentText("Overlay active")
             .setSmallIcon(R.drawable.ic_notification)
