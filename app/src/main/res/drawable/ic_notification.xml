@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple sword icon for the notification bar -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M6.92,5L3,8.92 13.06,19l1.25,3.75 3.75,-1.25L7,8.92zM17.5,2L14,5.5l1.5,1.5L17,5.5 18.5,7l-1.5,1.5L19,9.5 22.5,6z"/>
+</vector>
