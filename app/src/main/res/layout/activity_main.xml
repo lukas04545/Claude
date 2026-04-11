@@ -8,11 +8,10 @@
     android:padding="32dp"
     android:background="#1A1A2E">
 
-    <!-- Logo / title -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="⚔ Clash Royale\nAI Detector"
+        android:text="Clash Royale\nElixir Tracker"
         android:textSize="28sp"
         android:textColor="#E94560"
         android:textStyle="bold"
@@ -22,40 +21,22 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Real-time enemy card &amp; elixir tracker"
+        android:text="Real-time enemy elixir overlay"
         android:textSize="13sp"
         android:textColor="#8899AA"
         android:gravity="center"
         android:layout_marginBottom="40dp"/>
 
-    <!-- Instructions card -->
-    <LinearLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/card_background"
-        android:padding="16dp"
-        android:layout_marginBottom="32dp">
+        android:text="1. Tap START and grant permissions\n2. Switch to Clash Royale\n3. The overlay shows estimated enemy elixir\n4. Tap STOP to hide the overlay"
+        android:textColor="#AABBCC"
+        android:textSize="13sp"
+        android:lineSpacingMultiplier="1.5"
+        android:layout_marginBottom="40dp"
+        android:gravity="center"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="How it works"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:textSize="15sp"
-            android:layout_marginBottom="8dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="1. Tap START — grant overlay &amp; screen capture permissions\n2. Switch to Clash Royale\n3. The overlay shows enemy elixir + last 4 cards played\n4. Tap STOP to hide the overlay"
-            android:textColor="#AABBCC"
-            android:textSize="13sp"
-            android:lineSpacingMultiplier="1.4"/>
-    </LinearLayout>
-
-    <!-- Status -->
     <TextView
         android:id="@+id/status_text"
         android:layout_width="wrap_content"
@@ -65,12 +46,11 @@
         android:textSize="14sp"
         android:layout_marginBottom="24dp"/>
 
-    <!-- Buttons -->
     <Button
         android:id="@+id/btn_start"
         android:layout_width="200dp"
         android:layout_height="52dp"
-        android:text="START DETECTOR"
+        android:text="START"
         android:backgroundTint="#E94560"
         android:textColor="#FFFFFF"
         android:textStyle="bold"

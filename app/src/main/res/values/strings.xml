@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Clash Detector</string>
+    <string name="status_ready">Ready</string>
+    <string name="status_active">Detector active — switch to Clash Royale</string>
+    <string name="status_stopped">Detector stopped</string>
+    <string name="permission_overlay_denied">Overlay permission required</string>
+    <string name="permission_capture_denied">Screen capture permission denied</string>
 </resources>

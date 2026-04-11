@@ -7,13 +7,10 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import com.clashdetector.service.OverlayService
-import com.clashdetector.service.ScreenCaptureService
 
 class MainActivity : Activity() {
 
@@ -26,26 +23,24 @@ class MainActivity : Activity() {
     }
 
     companion object {
-        private const val REQ_OVERLAY   = 1001
-        private const val REQ_CAPTURE   = 1002
+        private const val REQ_OVERLAY = 1001
+        private const val REQ_CAPTURE = 1002
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Edge-to-edge: required when targeting API 35 (enforced by the platform)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.setDecorFitsSystemWindows(false)
         }
 
         setContentView(R.layout.activity_main)
 
-        // Apply window insets so content stays clear of system bars
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val rootView = findViewById<ViewGroup>(android.R.id.content)
-            rootView.setOnApplyWindowInsetsListener { view, insets ->
-                val sysInsets = insets.getInsets(android.view.WindowInsets.Type.systemBars())
-                view.setPadding(sysInsets.left, sysInsets.top, sysInsets.right, sysInsets.bottom)
+            val root = findViewById<ViewGroup>(android.R.id.content)
+            root.setOnApplyWindowInsetsListener { view, insets ->
+                val sys = insets.getInsets(android.view.WindowInsets.Type.systemBars())
+                view.setPadding(sys.left, sys.top, sys.right, sys.bottom)
                 insets
             }
         }
@@ -57,7 +52,7 @@ class MainActivity : Activity() {
         btnStart.setOnClickListener { onStartClicked() }
         btnStop.setOnClickListener  { onStopClicked()  }
 
-        updateUi(running = false)
+        setUiState(running = false)
     }
 
     private fun onStartClicked() {
@@ -69,20 +64,22 @@ class MainActivity : Activity() {
             @Suppress("DEPRECATION")
             startActivityForResult(intent, REQ_OVERLAY)
         } else {
-            requestProjectionPermission()
+            requestScreenCapture()
         }
     }
 
     private fun onStopClicked() {
-        stopCapture()
+        Intent(this, DetectorService::class.java).also {
+            it.action = DetectorService.ACTION_STOP
+            startService(it)
+        }
+        setUiState(running = false)
+        statusText.text = getString(R.string.status_stopped)
     }
 
-    private fun requestProjectionPermission() {
+    private fun requestScreenCapture() {
         @Suppress("DEPRECATION")
-        startActivityForResult(
-            projectionManager.createScreenCaptureIntent(),
-            REQ_CAPTURE
-        )
+        startActivityForResult(projectionManager.createScreenCaptureIntent(), REQ_CAPTURE)
     }
 
     @Deprecated("Deprecated in Java")
@@ -91,53 +88,33 @@ class MainActivity : Activity() {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             REQ_OVERLAY -> {
-                if (Settings.canDrawOverlays(this)) {
-                    requestProjectionPermission()
-                } else {
-                    Toast.makeText(this, "Overlay permission required", Toast.LENGTH_LONG).show()
-                }
+                if (Settings.canDrawOverlays(this)) requestScreenCapture()
+                else Toast.makeText(this, R.string.permission_overlay_denied, Toast.LENGTH_LONG).show()
             }
             REQ_CAPTURE -> {
                 if (resultCode == RESULT_OK && data != null) {
-                    startCapture(resultCode, data)
+                    startDetector(resultCode, data)
                 } else {
-                    Toast.makeText(this, "Screen capture permission denied", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.permission_capture_denied, Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
 
-    private fun startCapture(resultCode: Int, data: Intent) {
-        Intent(this, ScreenCaptureService::class.java).also {
-            it.action = ScreenCaptureService.ACTION_START
-            it.putExtra(ScreenCaptureService.EXTRA_RESULT_CODE, resultCode)
-            it.putExtra(ScreenCaptureService.EXTRA_RESULT_DATA, data)
+    private fun startDetector(resultCode: Int, data: Intent) {
+        Intent(this, DetectorService::class.java).also {
+            it.action = DetectorService.ACTION_START
+            it.putExtra(DetectorService.EXTRA_RESULT_CODE, resultCode)
+            it.putExtra(DetectorService.EXTRA_RESULT_DATA, data)
             startForegroundService(it)
         }
-        Intent(this, OverlayService::class.java).also {
-            it.action = OverlayService.ACTION_SHOW
-            startForegroundService(it)
-        }
-        updateUi(running = true)
-        statusText.text = "Detector active — switch to Clash Royale"
+        setUiState(running = true)
+        statusText.text = getString(R.string.status_active)
     }
 
-    private fun stopCapture() {
-        Intent(this, ScreenCaptureService::class.java).also {
-            it.action = ScreenCaptureService.ACTION_STOP
-            startService(it)
-        }
-        Intent(this, OverlayService::class.java).also {
-            it.action = OverlayService.ACTION_HIDE
-            startService(it)
-        }
-        updateUi(running = false)
-        statusText.text = "Detector stopped"
-    }
-
-    private fun updateUi(running: Boolean) {
+    private fun setUiState(running: Boolean) {
         btnStart.isEnabled = !running
         btnStop.isEnabled  = running
-        statusText.text    = if (running) "Running…" else "Ready"
+        if (!running) statusText.text = getString(R.string.status_ready)
     }
 }
